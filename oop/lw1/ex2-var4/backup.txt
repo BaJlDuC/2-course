@@ -1,0 +1,115 @@
+#include <iostream>
+#include <cmath>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sstream>
+
+using namespace std;
+
+void printBin(unsigned dec)
+{
+    if (dec)
+    {
+        printBin(dec >> 1);
+        cout << (dec & 1);
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 2)
+    {
+        cout << "Invalid arguments"
+             << "Enter: program.exe <decimalNumber>" << endl;
+        return 1;
+    }
+
+    string decimalString(argv[1]);
+    unsigned int decimalNumber = 0;
+    stringstream ss;
+    ss << decimalString;
+    ss >> decimalNumber;
+    bool firstNotNull = false;
+    int bigInt = pow(2, 31) - 1;
+
+    for (int i = 0; i < decimalString.size(); i++)
+    {
+        switch (decimalString[i])
+        {
+        case '0':
+            if (firstNotNull == false)
+            {
+                cout << "Don't enter 0 before number and don't enter only 0"
+                     << endl;
+                return 1;
+            }
+        case '1':
+            if (firstNotNull == false)
+            {
+                firstNotNull = true;
+            }
+            break;
+        case '2':
+            if (firstNotNull == false)
+            {
+                firstNotNull = true;
+            }
+            break;
+        case '3':
+            if (firstNotNull == false)
+            {
+                firstNotNull = true;
+            }
+            break;
+        case '4':
+            if (firstNotNull == false)
+            {
+                firstNotNull = true;
+            }
+            break;
+        case '5':
+            if (firstNotNull == false)
+            {
+                firstNotNull = true;
+            }
+            break;
+        case '6':
+            if (firstNotNull == false)
+            {
+                firstNotNull = true;
+            }
+            break;
+        case '7':
+            if (firstNotNull == false)
+            {
+                firstNotNull = true;
+            }
+            break;
+        case '8':
+            if (firstNotNull == false)
+            {
+                firstNotNull = true;
+            }
+            break;
+        case '9':
+            if (firstNotNull == false)
+            {
+                firstNotNull = true;
+            }
+            break;
+        default:
+            cout << "Uncorrect argument. Enter only number" << endl;
+            return 1;
+            break;
+        }
+    }
+
+    if ((decimalNumber) > bigInt)
+    {
+        cout << "Very big number (number > 2^31)" << endl;
+        return 1;
+    }
+
+    printBin(decimalNumber);
+    return 0;
+}
