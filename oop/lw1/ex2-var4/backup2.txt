@@ -1,0 +1,55 @@
+#include <iostream>
+#include <cmath>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sstream>
+
+using namespace std;
+
+void printBin(unsigned dec)
+{
+    if (dec)
+    {
+        printBin(dec >> 1);
+        cout << (dec & 1);
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 2)
+    {
+        cout << "Invalid arguments"
+             << "Enter: program.exe <decimalNumber>" << endl;
+        return 1;
+    }
+
+    string decimalString(argv[1]);
+    for (int i = 0; i < decimalString.size(); i++)
+    {
+        if ((decimalString[i] > '0') && (decimalString[i] <= '9'))
+        {
+            //
+        }
+        else
+        {
+            cout << "Enter only integer number" << endl;
+            return 1;
+        }
+    }
+
+    unsigned int decimalNumber = 0;
+    decimalNumber = stoi(decimalString);
+    cout << decimalNumber << endl;
+    int bigInt = pow(2, 31) - 1;
+
+    if ((decimalNumber) > bigInt)
+    {
+        cout << "Very big number (number > 2^31)" << endl;
+        return 1;
+    }
+
+    printBin(decimalNumber);
+    cout << decimalNumber << endl;
+    return 0;
+}

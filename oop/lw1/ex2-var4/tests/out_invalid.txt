@@ -1,0 +1,2 @@
+Invalid arguments
+Enter: dec2bin.exe <decimalNumber>

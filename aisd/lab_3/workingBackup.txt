@@ -1,0 +1,156 @@
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <string>
+#include <sstream>
+#define DIGITS(x) (x >= 0 && x <= 9) // dont work
+
+using namespace std;
+
+bool digitNumber(int x)
+{
+    if ((x >= 0) && (x <= 9))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+int main()
+{
+    string inputFile;
+    string treeLine;
+
+    int allMass = 0;
+    int mass = 0;
+    int moveNumber = 0;
+    int newValue = 0;
+    map<char, int> foliage;
+
+    bool findRoot = false;
+    char treeVertex;
+    char button = '0';
+
+    cout << "Enter name of input file(tree): " << endl;
+    cin >> inputFile;
+    ifstream inputTree(inputFile.c_str());
+    if (!inputTree)
+    {
+        cout << "Input file is not open. Check file name correctness" << endl;
+        return 1;
+    }
+    else
+    {
+        cout << "Input file is open\n"
+             << endl;
+    }
+
+    while (!inputTree.eof())
+    {
+        moveNumber = 0;
+        inputTree >> treeLine;
+        for (int i = 0; i < treeLine.size(); i++)
+        {
+            if (findRoot == false)
+            {
+                if ((treeLine[i] <= 'Z') && (treeLine[i] >= 'A'))
+                {
+                    cout << "Root find" << endl;
+                    findRoot = true;
+                }
+                else
+                {
+                    cout << "Don't find a root. Root begin without '*' and with\na capital letter" << endl;
+                    return 1;
+                }
+            }
+
+            if (treeLine[i] == '*')
+            {
+                treeLine[i] = 0;
+            }
+
+            if ((treeLine[i] <= 'Z') && (treeLine[i] >= 'A'))
+            {
+                foliage[treeLine[i]] = 0;
+                treeVertex = treeLine[i];
+                treeLine[i] = 0;
+            }
+
+            if ((treeLine[i] <= '9') && (treeLine[i] >= '0'))
+            {
+                // convertString << treeLine;
+                // convertString >> mass;
+                // allMass += mass;
+                // cout << " all mass" << allMass << endl;
+                cout << " here " << endl;
+                treeLine[moveNumber++] = treeLine[i];
+                treeLine[i] = 0;
+            }
+            // проверка на число
+            //cout << foliage['A'] << endl;
+        }
+        cout << "line - |" << treeLine << '|' << endl;
+        stringstream convertString;
+        convertString << treeLine;
+        convertString >> mass;
+        foliage[treeVertex] = mass;
+
+        allMass += mass;
+        cout << "mass - " << mass << endl;
+        cout << "allMass - " << allMass << endl;
+    }
+    map<char, int>::iterator it = foliage.begin();
+    cout << "Foliages and their size" << endl;
+    for (int i = 0; it != foliage.end(); it++, i++)
+    {
+        cout << i << ") Key " << it->first << ", value " << it->second << endl;
+    }
+    cout << "Total weight = " << allMass << endl;
+
+    while (button != 'N')
+    {
+        cout << "Do you want to change vertex values? Y - yes, N - no, exit\n"
+             << endl;
+        cin >> button;
+        if (button == 'Y')
+        {
+            cout << "Enter vertex of tree (value of vertex != 0): " << endl;
+            cin >> button;
+
+            map<char, int>::iterator it_find, it_notFind;
+
+            if (foliage[button] == 0)
+            {
+                cout << "Error. Vertex value can not be a 0 or vertex does not exist\n"
+                     << endl;
+            }
+            else
+            {
+
+                it_find = foliage.find(button);
+                cout << "Selected vertex " << button << ". Current value " << it_find->second << endl;
+                cout << "Enter new value: " << endl;
+                allMass -= foliage[button];
+                cout << "All mass again " << allMass << endl;
+                cin >> newValue;
+                while (!digitNumber(newValue))
+                {
+                    cout << "Error. Enter only numbers" << endl;
+                    cin >> newValue;
+                }
+                foliage[button] = newValue;
+                allMass += newValue;
+                cout << "New all mass = " << allMass << endl;
+            }
+        }
+        else if (button != 'N')
+        {
+            cout << "Unknown command. Press Y to change size of voliages\nor press N to exit\n"
+                 << endl;
+        }
+    }
+}
