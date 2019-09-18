@@ -1,0 +1,5 @@
+mainSquare = 15
+triangle1 = 6
+triangle2 = 0
+triangle3 = 9
+In
