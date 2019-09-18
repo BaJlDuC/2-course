@@ -1,1 +1,6 @@
+<<<<<<< HEAD
 Very big number (number > (2^31)-1)
+=======
+Uncorrect argument
+Enter only integer number from (0 <= num < (2^31)-1)
+>>>>>>> 00e7c102605564953d4f14c5e7adb35a94c0bb89

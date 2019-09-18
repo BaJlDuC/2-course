@@ -6,7 +6,6 @@
 
 using namespace std;
 
-<<<<<<< HEAD
 const string BIG_NUMBER = "Very big number (number > (2^31)-1)";
 const string INVALID_ARG = "Invalid arguments\nEnter: dec2bin.exe <decimalNumber>";
 const string UNCORRECT_ARG = "Uncorrect argument\nEnter only integer number";
@@ -23,12 +22,6 @@ bool checkCorrect(char number)
         return false;
     }
 }
-=======
-const string INVALID_ARG = "Invalid arguments\nEnter: dec2bin.exe <decimalNumber>";
-const string UNCORRECT_ARG = "Uncorrect argument\nEnter only integer number from (0 <= num < (2^31)-1)";
-const string OUT_NULL = "0";
-const int NUM_NULL = 0;
->>>>>>> 00e7c102605564953d4f14c5e7adb35a94c0bb89
 
 void printBin(unsigned dec)
 {
@@ -46,7 +39,6 @@ int main(int argc, char *argv[])
         cout << INVALID_ARG << endl;
         return 1;
     }
-<<<<<<< HEAD
 
     string decimalString(argv[1]);
     unsigned int decimalNumber = 0;
@@ -72,37 +64,6 @@ int main(int argc, char *argv[])
     if ((decimalNumber) > bigInt)
     {
         cout << BIG_NUMBER << endl;
-=======
-    string decimalString(argv[1]);
-    if (decimalString == "0")
-    {
-        cout << OUT_NULL;
-        return 0;
-    }
-    size_t stoppedAt;
-    int decimalNumber = 0;
-
-    try
-    {
-        decimalNumber = stoi(decimalString, &stoppedAt);
-    }
-
-    catch (invalid_argument)
-    {
-        cout << UNCORRECT_ARG << endl;
-        return 1;
-    }
-
-    catch (out_of_range)
-    {
-        cout << UNCORRECT_ARG << endl;
-        return 1;
-    }
-
-    if ((decimalNumber < NUM_NULL) || (stoppedAt != decimalString.size()))
-    {
-        cout << UNCORRECT_ARG << endl;
->>>>>>> 00e7c102605564953d4f14c5e7adb35a94c0bb89
         return 1;
     }
 

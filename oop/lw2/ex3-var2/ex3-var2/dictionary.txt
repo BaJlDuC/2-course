@@ -1,0 +1,11 @@
+Moscow-Москва
+blue-синий
+book-книга
+cat-кот, кошка
+dog-собака, пес
+green-зеленый
+keyboard-клавиатура
+picture-картинка
+red-красный
+sound-звук
+table-стол
