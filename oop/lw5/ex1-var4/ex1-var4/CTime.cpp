@@ -34,7 +34,7 @@ unsigned CTime::GetSeconds() const
 
 bool CTime::isValid() const
 {
-	if ((hoursProtected == HOURS_LIMIT) || (minutesProtected == MINUTES_LIMIT) || (secondsProtected == MINUTES_LIMIT))
+	if ((hoursProtected >= HOURS_LIMIT) || (minutesProtected >= MINUTES_LIMIT) || (secondsProtected >= MINUTES_LIMIT))
 	{
 		return false;
 	}
@@ -103,9 +103,17 @@ CTime operator -(CTime &time1, CTime &time2)
 	}
 	else if (decrementNextValue == true)
 	{
-		resultMinutes = time1.GetMinutes() - time2.GetMinutes();
-		resultMinutes--;
-		decrementNextValue = false;
+		if ((time1.GetMinutes() == 0) && (time2.GetMinutes() == 0)) //beg
+		{
+			resultMinutes = MINUTES_LIMIT - (time2.GetMinutes() - time1.GetMinutes());
+			resultMinutes--;
+		}
+		else
+		{
+			resultMinutes = time1.GetMinutes() - time2.GetMinutes();
+			resultMinutes--;
+			decrementNextValue = false;
+		} // end
 	}
 	else
 	{
@@ -115,12 +123,12 @@ CTime operator -(CTime &time1, CTime &time2)
 	{
 		if (decrementNextValue == true)
 		{
-			resultHours = MINUTES_LIMIT - (time2.GetHours() - time1.GetHours());
+			resultHours = HOURS_LIMIT - (time2.GetHours() - time1.GetHours());
 			resultHours--;
 		}
 		else
 		{
-			resultHours = MINUTES_LIMIT - (time2.GetHours() - time1.GetHours());
+			resultHours = HOURS_LIMIT - (time2.GetHours() - time1.GetHours());
 		}
 	}
 	else if (decrementNextValue == true)
@@ -181,16 +189,16 @@ CTime operator--(CTime &time, int)
 	{
 		newSeconds--;
 	}
-	if (newMinutes == 0)
+	if ((newMinutes == 0) && (decrementNextValue == true))
 	{
-newMinutes = MINUTES_LIMIT - 1;
+        newMinutes = MINUTES_LIMIT - 1;
 	}
 	else if (decrementNextValue == true)
 	{
-	newMinutes--;
-	decrementNextValue = false;
+	    newMinutes--;
+	    decrementNextValue = false;
 	}
-	if (newHours == 0)
+	if ((newHours == 0) && (decrementNextValue == true))
 	{
 		newHours = HOURS_LIMIT - 1;
 	}
@@ -220,7 +228,7 @@ CTime operator *(CTime &time1, const unsigned &factor)
 		resultMinutes = resultMinutes % MINUTES_LIMIT;
 		resultHours += resultCopy / MINUTES_LIMIT;
 	}
-	resultHours = time1.GetHours() * factor;
+	resultHours += time1.GetHours() * factor;
 	if (resultHours >= HOURS_LIMIT)
 	{
 		resultHours = resultHours % HOURS_LIMIT;
@@ -247,7 +255,7 @@ CTime operator *(const unsigned &factor, CTime &time1)
 		resultMinutes = resultMinutes % MINUTES_LIMIT;
 		resultHours += resultCopy / MINUTES_LIMIT;
 	}
-	resultHours = time1.GetHours() * factor;
+	resultHours += time1.GetHours() * factor;
 	if (resultHours >= HOURS_LIMIT)
 	{
 		resultHours = resultHours % HOURS_LIMIT;
@@ -257,89 +265,37 @@ CTime operator *(const unsigned &factor, CTime &time1)
 	return result;
 }
 
-CTime operator /(CTime &time1, CTime &time2)
+int operator /(CTime &time1, CTime &time2)
 {
-	unsigned resultHours = 0, resultMinutes = 0, resultSeconds = 0, secondsInTime1 = 0, secondsInTime2 = 0;
-	//secondsInTime1 = time1.GetSeconds() + time1.GetMinutes() * SECONDS_LIMIT + time1.GetHours * MINUTES_LIMIT * SECONDS_LIMIT;
-	//secondsInTime2 = time2.GetSeconds() + time2.GetMinutes() * SECONDS_LIMIT + time2.GetHours * MINUTES_LIMIT * SECONDS_LIMIT;
-	if ((time2.GetHours() == 0) && (time2.GetMinutes() == 0) && (time2.GetSeconds() == 0)) //äîïèëèòü (ìá ïåðåâîäîì â ñåêóíäû)
+	unsigned result = 0, secondsInTime1 = 0, secondsInTime2 = 0;
+	secondsInTime1 = time1.GetSeconds() + time1.GetMinutes() * SECONDS_LIMIT + time1.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
+	secondsInTime2 = time2.GetSeconds() + time2.GetMinutes() * SECONDS_LIMIT + time2.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
+	if (secondsInTime2 == 0)
 	{
 		throw runtime_error("Division by zero");
 	}
-	else if ((time2.GetHours() != 0) && (time2.GetMinutes() != 0) && (time2.GetSeconds() == 0)) // ÏÐÎÂÅÐÈÒÜ
-	{
-		resultHours = time1.GetHours() / time2.GetHours();
-		resultMinutes = time1.GetMinutes() / time2.GetMinutes();
-		resultSeconds = time1.GetSeconds();
-	}
-	else if ((time2.GetHours() != 0) && (time2.GetMinutes() == 0) && (time2.GetSeconds() == 0)) // ÏÐÎÂÅÐÈÒÜ
-	{
-		resultHours = time1.GetHours() / time2.GetHours();
-		resultMinutes = time1.GetMinutes();
-		resultSeconds = time1.GetSeconds();
-	}
-	else if ((time2.GetHours() == 0) && (time2.GetMinutes() != 0) && (time2.GetSeconds() == 0)) // ÏÐÎÂÅÐÈÒÜ
-	{
-		resultMinutes = (time1.GetHours() * MINUTES_LIMIT + time1.GetMinutes()) / time2.GetMinutes();
-		if (resultMinutes >= MINUTES_LIMIT)
-		{
-			resultHours = (resultMinutes - resultMinutes % MINUTES_LIMIT) / MINUTES_LIMIT;
-			resultMinutes %= MINUTES_LIMIT;
-		}
-		resultSeconds = time1.GetSeconds();
-	}
-	else if ((time2.GetHours() != 0) && (time2.GetMinutes() == 0) && (time2.GetSeconds() != 0)) // ÏÐÎÂÅÐÈÒÜ
-	{
-		resultMinutes = (time1.GetHours() * MINUTES_LIMIT + time1.GetMinutes()) / time2.GetHours() * MINUTES_LIMIT;
-		if (resultMinutes >= MINUTES_LIMIT)
-		{
-			resultHours = (resultMinutes - resultMinutes % MINUTES_LIMIT) / MINUTES_LIMIT;
-			resultMinutes %= MINUTES_LIMIT;
-		}
-		resultSeconds = time1.GetSeconds() / time2.GetSeconds();
-	}
-	else if ((time2.GetHours() == 0) && (time2.GetMinutes() != 0) && (time2.GetSeconds() != 0)) // + ÏÐÎÂÅÐÈÒÜ
-	{
-		resultMinutes = (time1.GetHours() * MINUTES_LIMIT + time1.GetMinutes()) / time2.GetMinutes();
-		if (resultMinutes >= MINUTES_LIMIT)
-		{
-			resultHours = (resultMinutes - resultMinutes % MINUTES_LIMIT) / MINUTES_LIMIT;
-			resultMinutes %= MINUTES_LIMIT;
-		}
-		resultSeconds = time1.GetSeconds() / time2.GetSeconds();
-	}
-	else if ((time2.GetHours() == 0) && (time2.GetMinutes() == 0) && (time2.GetSeconds() != 0)) // ÏÐÎÂÅÐÈÒÜ
-	{
-		resultSeconds = (time1.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT + time1.GetMinutes() * SECONDS_LIMIT + time1.GetSeconds()) / time2.GetSeconds();
-		if (resultSeconds >= SECONDS_LIMIT)
-		{
-			resultHours = (resultSeconds - resultSeconds % SECONDS_LIMIT) / MINUTES_LIMIT;
-			resultMinutes = (resultSeconds - resultSeconds % SECONDS_LIMIT) % MINUTES_LIMIT;
-			resultSeconds %= SECONDS_LIMIT;
-		}
-	}
-	else
-	{
-		resultHours = time1.GetHours() / time2.GetHours();
-		resultMinutes = time1.GetMinutes() / time2.GetMinutes();
-		resultSeconds = time1.GetSeconds() / time2.GetSeconds();
-	}
-
-	CTime result(resultHours, resultMinutes, resultSeconds);
-
+   
+	result = secondsInTime1 / secondsInTime2;
 	return result;
 } 
 
 CTime operator /(CTime &time1, const unsigned &divisor)
 {
-	unsigned resultHours = 0, resultMinutes = 0, resultSeconds = 0;
+	unsigned resultHours = 0, resultMinutes = 0, resultSeconds = 0, secondsAfterDivision = 0, secondsInTime1 = 0;
+	secondsInTime1 = time1.GetSeconds() + time1.GetMinutes() * SECONDS_LIMIT + time1.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
 	if (divisor == 0)
 	{
 		throw runtime_error("Division by zero");
 	}
-	resultHours = time1.GetHours() / divisor;
-	resultMinutes = time1.GetMinutes() / divisor;
-	resultSeconds = time1.GetSeconds() / divisor;
+	secondsAfterDivision = secondsInTime1 / divisor;
+	resultSeconds = secondsAfterDivision % SECONDS_LIMIT;
+	resultMinutes = secondsAfterDivision / SECONDS_LIMIT;
+	if (resultMinutes >= MINUTES_LIMIT)
+	{
+		resultMinutes %= MINUTES_LIMIT;
+		resultHours = resultMinutes / MINUTES_LIMIT;
+	}
+	resultHours += secondsAfterDivision / SECONDS_LIMIT / MINUTES_LIMIT;
 
 	CTime result(resultHours, resultMinutes, resultSeconds);
 
@@ -370,21 +326,10 @@ bool operator !=(CTime &time1, CTime &time2)
 
 bool operator >(CTime &time1, CTime &time2)
 {
-	if ((time1.GetHours() < time2.GetHours()))
-	{
-		return false;
-	}
-	if (time1.GetMinutes() < time2.GetMinutes())
-	{
-		return false;
-	}
-	if (time1.GetSeconds() < time2.GetSeconds())
-	{
-		return false;
-	}
-	if ((time1.GetHours() == time2.GetHours()) &&
-		(time1.GetMinutes() == time2.GetMinutes()) &&
-		(time1.GetSeconds() == time2.GetSeconds()))
+	int secondsInTime1 = 0, secondsInTime2 = 0;
+	secondsInTime1 = time1.GetSeconds() + time1.GetMinutes() * SECONDS_LIMIT + time1.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
+	secondsInTime2 = time2.GetSeconds() + time2.GetMinutes() * SECONDS_LIMIT + time2.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
+	if (secondsInTime1 < secondsInTime2)
 	{
 		return false;
 	}
@@ -393,21 +338,11 @@ bool operator >(CTime &time1, CTime &time2)
 
 bool operator <(CTime &time1, CTime &time2)
 {
-	if ((time1.GetHours() > time2.GetHours()))
-	{
-		return false;
-	}
-	if (time1.GetMinutes() > time2.GetMinutes())
-	{
-		return false;
-	}
-	if (time1.GetSeconds() > time2.GetSeconds())
-	{
-		return false;
-	}
-	if ((time1.GetHours() == time2.GetHours()) &&
-		(time1.GetMinutes() == time2.GetMinutes()) &&
-		(time1.GetSeconds() == time2.GetSeconds()))
+	int secondsInTime1 = 0, secondsInTime2 = 0;
+	secondsInTime1 = time1.GetSeconds() + time1.GetMinutes() * SECONDS_LIMIT + time1.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
+	secondsInTime2 = time2.GetSeconds() + time2.GetMinutes() * SECONDS_LIMIT + time2.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
+
+	if (secondsInTime1 > secondsInTime2)
 	{
 		return false;
 	}
@@ -416,21 +351,15 @@ bool operator <(CTime &time1, CTime &time2)
 
 bool operator >=(CTime &time1, CTime &time2)
 {
-	if ((time1.GetHours() < time2.GetHours()))
+	int secondsInTime1 = 0, secondsInTime2 = 0;
+	secondsInTime1 = time1.GetSeconds() + time1.GetMinutes() * SECONDS_LIMIT + time1.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
+	secondsInTime2 = time2.GetSeconds() + time2.GetMinutes() * SECONDS_LIMIT + time2.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
+
+	if (secondsInTime1 < secondsInTime2)
 	{
 		return false;
 	}
-	if (time1.GetMinutes() < time2.GetMinutes())
-	{
-		return false;
-	}
-	if (time1.GetSeconds() < time2.GetSeconds())
-	{
-		return false;
-	}
-	if ((time1.GetHours() == time2.GetHours()) &&
-		(time1.GetMinutes() == time2.GetMinutes()) &&
-		(time1.GetSeconds() == time2.GetSeconds()))
+	if (secondsInTime1 == secondsInTime2)
 	{
 		return true;
 	}
@@ -439,21 +368,15 @@ bool operator >=(CTime &time1, CTime &time2)
 
 bool operator <=(CTime &time1, CTime &time2)
 {
-	if ((time1.GetHours() > time2.GetHours()))
+	int secondsInTime1 = 0, secondsInTime2 = 0;
+	secondsInTime1 = time1.GetSeconds() + time1.GetMinutes() * SECONDS_LIMIT + time1.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
+	secondsInTime2 = time2.GetSeconds() + time2.GetMinutes() * SECONDS_LIMIT + time2.GetHours() * MINUTES_LIMIT * SECONDS_LIMIT;
+
+	if (secondsInTime1 > secondsInTime2)
 	{
 		return false;
 	}
-	if (time1.GetMinutes() > time2.GetMinutes())
-	{
-		return false;
-	}
-	if (time1.GetSeconds() > time2.GetSeconds())
-	{
-		return false;
-	}
-	if ((time1.GetHours() == time2.GetHours()) &&
-		(time1.GetMinutes() == time2.GetMinutes()) &&
-		(time1.GetSeconds() == time2.GetSeconds()))
+	if (secondsInTime1 == secondsInTime2)
 	{
 		return true;
 	}

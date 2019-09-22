@@ -24,7 +24,7 @@ public:
 	CTime friend operator *(CTime &time1, const unsigned &number);
 	CTime friend operator *(const unsigned &number, CTime &time1);
 
-	CTime friend operator /(CTime &time1, CTime &time2);
+	int friend operator /(CTime &time1, CTime &time2);
 	CTime friend operator /(CTime &time1, const unsigned &number);
 
 	bool friend operator==(CTime &time1, CTime &time2);
