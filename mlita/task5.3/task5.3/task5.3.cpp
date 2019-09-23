@@ -21,7 +21,7 @@ int main()
 {
 	string numberOnString = "";
 	vector<unsigned long long> numbers;
-	unsigned long long int M = 0, N = 0, digits = 0;
+	unsigned long long int M = 0, N = 0, digits = 0, oneMorePart = 0;
 	int digitsOnM = 0, digitsOnN = 0;
 
 	ifstream inputFile("INPUT.txt");
@@ -51,11 +51,13 @@ int main()
 		{
 			if (i == digitsOnM)
 			{
-				digits += (pow(10, i) - M) * i;
+				oneMorePart = (pow(10, i) - M) * i;
+				digits = digits + oneMorePart;
 			}
 			else
 			{
-				digits += (pow(10, i) - pow(10, i - 1)) * i;
+				oneMorePart = (pow(10, i) - pow(10, i - 1)) * i;
+				digits = digits + oneMorePart;
 			}
 		}
 		else

@@ -336,6 +336,28 @@ TEST_CASE("* tests")
 	CTime time0_45_0(0, 45, 0);
 	CTime time0_0_20(0, 0, 20);
 
+	try
+	{
+		(time1 * -5).GetHours();
+		(time1 * -5).GetMinutes();
+		(time1 * -5).GetSeconds();
+	}
+	catch (runtime_error err)
+	{
+		CHECK(strcmp(err.what(), "factor < 0") == 0);
+	}
+
+	try
+	{
+		(-5 * time1).GetHours();
+		(-5 * time1).GetMinutes();
+		(-5 * time1).GetSeconds();
+	}
+	catch (runtime_error err)
+	{
+		CHECK(strcmp(err.what(), "factor < 0") == 0);
+	}
+
 	CHECK((time16_40_0 * 2).GetHours() == 9);
 	CHECK((time16_40_0 * 2).GetMinutes() == 20);
 	CHECK((time16_40_0 * 2).GetSeconds() == 0);
@@ -534,27 +556,15 @@ TEST_CASE("/ tests")
 	CHECK((time0_0_12 / 3).GetMinutes() == 0);
 	CHECK((time0_0_12 / 3).GetSeconds() == 4);
 
-	CHECK((time12_30_45 / -4).GetHours() == 0);
-	CHECK((time12_30_45 / -4).GetMinutes() == 0);
-	CHECK((time12_30_45 / -4).GetSeconds() == 0);
-	CHECK((time0_0_12 / -4).GetHours() == 0);
-	CHECK((time0_0_12 / -4).GetMinutes() == 0);
-	CHECK((time0_0_12 / -4).GetSeconds() == 0);
-	CHECK((time0_10_0 / -4).GetHours() == 0);
-	CHECK((time0_10_0 / -4).GetMinutes() == 0);
-	CHECK((time0_10_0 / -4).GetSeconds() == 0);
-	CHECK((time3_0_0 / -4).GetHours() == 0);
-	CHECK((time3_0_0 / -4).GetMinutes() == 0);
-	CHECK((time3_0_0 / -4).GetSeconds() == 0);
-	CHECK((time6_2_0 / -4).GetHours() == 0);
-	CHECK((time6_2_0 / -4).GetMinutes() == 0);
-	CHECK((time6_2_0 / -4).GetSeconds() == 0);
-	CHECK((time5_0_10 / -4).GetHours() == 0);
-	CHECK((time5_0_10 / -4).GetMinutes() == 0);
-	CHECK((time5_0_10 / -4).GetSeconds() == 0);
-	CHECK((time0_15_5 / -4).GetHours() == 0);
-	CHECK((time0_15_5 / -4).GetMinutes() == 0);
-	CHECK((time0_15_5 / -4).GetSeconds() == 0);
+	try
+	{
+		(time12_30_45 / -4).GetHours();
+	
+	}
+	catch (runtime_error err)
+	{
+		CHECK(strcmp(err.what(), "divisor < 0") == 0);
+	}
 
 	try
 	{
@@ -564,7 +574,6 @@ TEST_CASE("/ tests")
 	}
 	catch (runtime_error err)
 	{
-		cout << "Runtime error: " << err.what() << endl;
 		CHECK(strcmp(err.what(), "Division by zero") == 0);
 	}
 	try
@@ -573,7 +582,6 @@ TEST_CASE("/ tests")
 	}
 	catch (runtime_error err)
 	{
-		cout << "Runtime error: " << err.what() << endl;
 		CHECK(strcmp(err.what(), "Division by zero") == 0);
 	}
 }

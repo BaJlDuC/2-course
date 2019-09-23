@@ -43,6 +43,7 @@ int main()
 	inputFile >> N;
 	int* timeForEachPeople = new int[N];
 	int* stairs = new int[N];
+	int* stairsWithTime = new int[N];
 
 	for (int i = 0; i != N; i++) 
 	{
@@ -51,6 +52,7 @@ int main()
 		stairs[i] = S;
 		
 	}
+
 	qsort(stairs, N, sizeof(int), compareElements);
 	inputFile.seekg(1, ios::beg);
 
@@ -62,34 +64,31 @@ int main()
 		{
 			if ((stairs[j] == S) && (readed == false))
 			{
-				stairs[j] = S * t;
+				stairsWithTime[j] = S * t; //was stairs
 				readed = true;
 			}
 		}
 	}
-	
+
 	for (int i = 0; i != N; i++)
 	{
-		for (int j = i + 1; j != N; j++)
-		{
-			if (stairs[i] > stairs[j])
+			if (stairsWithTime[i] > stairsWithTime[i + 1])
 			{
 				for (int k = 0; k != N; k++)
 				{
-					if (timeForEachPeople[k] == stairs[i])
+					if (timeForEachPeople[k] == stairsWithTime[i]) // 
 					{
-						for (int m = 0; m != N; m++)
+						for (int m = k + 1; m != N; m++) //was i + 1
 						{
-							if (timeForEachPeople[m] == stairs[j])
+							if (timeForEachPeople[m] == stairsWithTime[i + 1]) // 
 							{
-								timeForEachPeople[j] = timeForEachPeople[k];
+								timeForEachPeople[m] = timeForEachPeople[k]; // was j
 							}
 						}
 					}
 				}
-				stairs[j] = stairs[i];
+				stairsWithTime[i + 1] = stairsWithTime[i];
 			}
-		}
 	}
 
 	for (int i = 0; i != N; i++)

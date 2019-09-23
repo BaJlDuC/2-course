@@ -211,10 +211,16 @@ CTime operator--(CTime &time, int)
 	return newTime;
 }
 
-CTime operator *(CTime &time1, const unsigned &factor)
+CTime operator *(CTime &time1, const unsigned &factor) 
 {
 	unsigned resultHours = 0, resultMinutes = 0, resultSeconds = 0, resultCopy = 0;
 	resultSeconds = time1.GetSeconds() * factor;
+
+	if ((time1.GetSeconds() * factor) > INT32_MAX)
+	{
+		throw runtime_error("factor < 0");
+	}
+
 	resultCopy = resultSeconds;
 	if (resultSeconds >= SECONDS_LIMIT)
 	{
@@ -240,6 +246,11 @@ CTime operator *(CTime &time1, const unsigned &factor)
 
 CTime operator *(const unsigned &factor, CTime &time1)
 {
+	if ((time1.GetSeconds() * factor) > INT32_MAX)
+	{
+		throw runtime_error("factor < 0");
+	}
+
 	unsigned resultHours = 0, resultMinutes = 0, resultSeconds = 0, resultCopy = 0;
 	resultSeconds = time1.GetSeconds() * factor;
 	resultCopy = resultSeconds;
@@ -286,6 +297,10 @@ CTime operator /(CTime &time1, const unsigned &divisor)
 	if (divisor == 0)
 	{
 		throw runtime_error("Division by zero");
+	}
+	if (divisor > INT32_MAX)
+	{
+		throw runtime_error("divisor < 0");
 	}
 	secondsAfterDivision = secondsInTime1 / divisor;
 	resultSeconds = secondsAfterDivision % SECONDS_LIMIT;
